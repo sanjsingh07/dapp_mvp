@@ -3,8 +3,9 @@ const router = express.Router();
 
 //------------ Importing Controllers ------------//
 const AuthController = require('../controllers/authController')
+const signupValidation = require('../middlewares/signupValidation');
 
-router.post('/register', AuthController.register);
+router.post('/register', signupValidation, AuthController.register);
 router.post('/login', AuthController.login);
 router.get('/verify/:token', AuthController.verify);
 router.post('/resend', AuthController.resend);

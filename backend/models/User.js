@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 var uniqueValidator = require('mongoose-unique-validator');
 const {CUSTOMER} = require('../config/constant')
 
@@ -15,6 +16,19 @@ const UserSchema = new mongoose.Schema({
   kyc_verified: {type: Boolean, default: false},
   address: {type: Object, default: null},
 }, { timestamps: true });
+
+// pre-save hook and password hashing
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    return next(error);
+  }
+});
 
 UserSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 

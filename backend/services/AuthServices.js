@@ -33,8 +33,9 @@ exports.login = async (body) => {
 
 	if (!user) throw new NotFoundError('User not found')
     else if (!user.verified) throw new BadRequestError('User not verify')
-	// if (!(await bcryptjs.compare(password, user.password)))
-	// 	throw new ValidationError('Wrong password.')
+
+	if (!(await bcryptjs.compare(password, user.password)))
+		throw new ValidationError('Wrong password.')
 
     const response = await verifyUserLogin(email, password)
     if (response.status === 'ok') {
